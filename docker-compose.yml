@@ -53,6 +53,10 @@ services:
     cap_add:
       - NET_ADMIN
     volumes:
+      # Data persistency
+      # sudo mkdir -p ~/data/config
+      # sudo mkdir -p ~/data/letsencrypt
+      # sudo mkdir -p ~/data/certs
       - ~/data/config:/config
       - ~/data/letsencrypt:/etc/letsencrypt
       - ~/data/certs:/usr/local/etc/haproxy/certs.d
