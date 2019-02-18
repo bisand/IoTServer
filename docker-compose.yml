@@ -1,0 +1,58 @@
+version: "3"
+
+services:
+  influxdb:
+    image: influxdb:latest
+    restart: always
+    container_name: influxdb
+# Ports should not be exposed externally. Use haproxy.
+    #ports:
+    #  - "8083:8083"
+    #  - "8086:8086"
+    #  - "8090:8090"
+    env_file:
+      - 'env.influxdb'
+    volumes:
+      # Data persistency
+      # sudo mkdir -p /srv/docker/influxdb/data
+      - /srv/docker/influxdb/data:/var/lib/influxdb
+
+  telegraf:
+    image: telegraf:latest
+    restart: always
+    container_name: telegraf
+    links:
+      - influxdb
+    volumes:
+      - ./telegraf.conf:/etc/telegraf/telegraf.conf:ro
+
+  grafana:
+    image: grafana/grafana:5.4.3
+    restart: always
+# Ports should not be exposed externally. Use haproxy.
+    #ports:
+    #  - 3000:3000
+    env_file:
+      - 'env.grafana'
+    links:
+      - influxdb
+    volumes:
+      # Data persistency
+      # sudo mkdir -p /srv/docker/grafana/data; chown 472:472 /srv/docker/grafana/data
+      - /srv/docker/grafana/data:/var/lib/grafana
+
+  haproxy-certbot:
+    image: nmarus/haproxy-certbot
+    container_name: haproxy-certbot
+    restart: always
+    ports:
+      - 80:80
+      - 443:443
+    links:
+      - grafana
+    cap_add:
+      - NET_ADMIN
+    volumes:
+      - ~/data/config:/config
+      - ~/data/letsencrypt:/etc/letsencrypt
+      - ~/data/certs:/usr/local/etc/haproxy/certs.d
