@@ -1,5 +1,5 @@
 # Grafana
-You will be able to run a simple TIG (Telegraf, InfluxDB, Grafana) stack in a docker environment.
+You will be able to run a simple TIG (Telegraf, InfluxDB, Grafana) stack in a docker environment. I assume you are running on a unix like system.
 
 1. Install Docker (https://www.docker.com/)
 2. Install Git (https://git-scm.com/)
