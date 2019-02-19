@@ -6,7 +6,7 @@ You will be able to run a simple TIG (Telegraf, InfluxDB, Grafana) stack in a do
 3. Clone Git repository: ``` git clone git@github.com:bisand/Grafana.git ```
 4. Type: ``` cd Grafana ``` to enter the newly cloned repository.
 5. Type: ``` sudo ./init.sh ``` to create some needed directories.
-6. Type: ``` sudo docker-compose up -d ``` to create and run the docker services needed.
+6. Type: ``` sudo docker-compose up -d ``` to create and run the docker services.
 
 You should be up and running with your TIG stack.
 
