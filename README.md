@@ -19,6 +19,12 @@ sudo docker exec haproxy-certbot certbot-certonly --domain example.com --email u
 
 Remember to replace **domain** and **email** with your own, and remove --dry-run when testing is complete.
 
+Make the newly created certificate available to HAProxy:
+```
+cat /root/data/letsencrypt/archive/<example.com>/fullchain1.pem /root/data/letsencrypt/archive/<example.com>/privkey1.pem > /root/data/certs/example.com.pem
+```
+(Replace example.com with your own domain name)
+
 To apply changes to HAProxy, run following command:
 ```
 sudo docker exec haproxy-certbot haproxy-refresh
