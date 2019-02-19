@@ -1,11 +1,12 @@
 # Grafana
 You will be able to run a simple TIG (Telegraf, InfluxDB, Grafana) stack in a docker environment.
 
-1. install Git (https://git-scm.com/)
-2. Clone Git repository: ``` git clone git@github.com:bisand/Grafana.git ```
-3. Type: ``` cd Grafana ```
-4. Type: ``` sudo ./init.sh ```
-5. Type: ``` sudo docker-compose up -d ```
+1. Install Docker (https://www.docker.com/)
+2. Install Git (https://git-scm.com/)
+3. Clone Git repository: ``` git clone git@github.com:bisand/Grafana.git ```
+4. Type: ``` cd Grafana ```
+5. Type: ``` sudo ./init.sh ```
+6. Type: ``` sudo docker-compose up -d ```
 
 You should be up and running with your TIG stack.
 
