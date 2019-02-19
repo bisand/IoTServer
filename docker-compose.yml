@@ -40,6 +40,7 @@ services:
       # Data persistency
       # sudo mkdir -p /srv/docker/grafana/data; chown 472:472 /srv/docker/grafana/data
       - /srv/docker/grafana/data:/var/lib/grafana
+      - ~/data/config/grafana/custom.ini:/usr/share/grafana/conf/custom.ini:ro
 
   haproxy-certbot:
     image: nmarus/haproxy-certbot
