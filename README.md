@@ -21,7 +21,7 @@ Remember to replace **domain** and **email** with your own, and remove --dry-run
 
 Make the newly created certificate available to HAProxy:
 ```
-cat /root/data/letsencrypt/archive/<example.com>/fullchain1.pem /root/data/letsencrypt/archive/<example.com>/privkey1.pem > /root/data/certs/example.com.pem
+cat /root/data/letsencrypt/archive/example.com/fullchain1.pem /root/data/letsencrypt/archive/example.com/privkey1.pem > /root/data/certs/example.com.pem
 ```
 (Replace example.com with your own domain name)
 
