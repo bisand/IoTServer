@@ -20,8 +20,10 @@ services:
     container_name: telegraf
     links:
       - influxdb
+    env_file:
+      - '~/data/config/env.telegraf'
     volumes:
-      - ./telegraf.conf:/etc/telegraf/telegraf.conf:ro
+      - ~/data/config/telegraf.conf:/etc/telegraf/telegraf.conf:ro
 
   grafana:
     image: grafana/grafana:5.4.3

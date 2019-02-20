@@ -25,9 +25,11 @@ chown 472:472 $grafanaPath
 echo "Creating config files..."
 touch $configPath/env.grafana
 touch $configPath/env.influxdb
+touch $configPath/env.telegraf
 
 # Copy HAProxy configuration file to config dir.
 cp ./haproxy.cfg /root/data/config/haproxy.cfg
+cp ./telegraf.conf /root/data/config/telegraf.conf
 
 # Start docker stack
 echo "Starting Docker stack..."
@@ -43,9 +45,10 @@ echo -e "Config path:        ${COL}$configPath${NC}"
 echo -e "Let's encrypt path: ${COL}$letsencryptPath${NC}"
 echo -e "Certificates path:  ${COL}$certPath${NC}"
 echo ""
-echo "To set environment variables in Grafana and InfluxDB, please use following files:"
+echo "To set environment variables in Grafana and InfluxDB, use following files:"
 echo -e "${COL}$configPath/env.grafana${NC}"
 echo -e "${COL}$configPath/env.influxdb${NC}"
+echo -e "${COL}$configPath/env.telegraf${NC}"
 echo ""
 echo "For generating SSL certificates for HAProxy, use following example as template:"
 echo -e "${COL}sudo docker exec haproxy-certbot certbot-certonly --domain example.com --email user@example.com --dry-run${NC}"
