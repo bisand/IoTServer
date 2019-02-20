@@ -5,11 +5,8 @@ services:
     image: influxdb:latest
     restart: always
     container_name: influxdb
-    # Ports should not be exposed externally. Use haproxy.
-    #ports:
-    #  - "8083:8083"
-    #  - "8086:8086"
-    #  - "8090:8090"
+    ports:
+      - "8086:8086"
     env_file:
       - '~/data/config/env.influxdb'
     volumes:
