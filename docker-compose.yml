@@ -5,13 +5,13 @@ services:
     image: influxdb:latest
     restart: always
     container_name: influxdb
-# Ports should not be exposed externally. Use haproxy.
+    # Ports should not be exposed externally. Use haproxy.
     #ports:
     #  - "8083:8083"
     #  - "8086:8086"
     #  - "8090:8090"
     env_file:
-      - 'env.influxdb'
+      - '~/data/config/env.influxdb'
     volumes:
       # Data persistency
       # sudo mkdir -p /srv/docker/influxdb/data
@@ -29,18 +29,17 @@ services:
   grafana:
     image: grafana/grafana:5.4.3
     restart: always
-# Ports should not be exposed externally. Use haproxy.
+    # Ports should not be exposed externally. Use haproxy.
     #ports:
     #  - 3000:3000
     env_file:
-      - 'env.grafana'
+      - '~/data/config/env.grafana'
     links:
       - influxdb
     volumes:
       # Data persistency
       # sudo mkdir -p /srv/docker/grafana/data; chown 472:472 /srv/docker/grafana/data
       - /srv/docker/grafana/data:/var/lib/grafana
-      - ~/data/config/grafana/custom.ini:/usr/share/grafana/conf/custom.ini:ro
 
   haproxy-certbot:
     image: nmarus/haproxy-certbot
