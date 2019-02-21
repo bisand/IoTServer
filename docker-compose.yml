@@ -1,12 +1,30 @@
 version: "3"
 
 services:
+  mosquitto:
+    image: eclipse-mosquitto:latest
+    restart: always
+    container_name: mosquitto
+    #ports:
+    #  - 1883:1883
+    #  - 9001:9001
+    env_file:
+      - '~/data/config/env.mosquitto'
+    volumes:
+      # Data persistency
+      # sudo mkdir -p /srv/docker/mosquitto/config
+      # sudo mkdir -p /srv/docker/mosquitto/data
+      # sudo mkdir -p /srv/docker/mosquitto/log
+      - /srv/docker/mosquitto/data:/mosquitto/data
+      - /srv/docker/mosquitto/log:/mosquitto/log
+      - ~/data/config/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
+
   influxdb:
     image: influxdb:latest
     restart: always
     container_name: influxdb
     ports:
-      - "8086:8086"
+      - 8086:8086
     env_file:
       - '~/data/config/env.influxdb'
     volumes:
@@ -20,6 +38,7 @@ services:
     container_name: telegraf
     links:
       - influxdb
+      - mosquitto
     env_file:
       - '~/data/config/env.telegraf'
     volumes:
@@ -28,9 +47,7 @@ services:
   grafana:
     image: grafana/grafana:latest
     restart: always
-    # Ports should not be exposed externally. Use haproxy.
-    #ports:
-    #  - 3000:3000
+    container_name: grafana
     env_file:
       - '~/data/config/env.grafana'
     links:
@@ -47,6 +64,8 @@ services:
     ports:
       - 80:80
       - 443:443
+      - 1883:1883
+      - 8883:8883
     links:
       - grafana
     cap_add:
