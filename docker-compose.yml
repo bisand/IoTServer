@@ -8,10 +8,6 @@ services:
     env_file:
       - '~/data/config/env.mosquitto'
     volumes:
-      # Data persistency
-      # sudo mkdir -p /srv/docker/mosquitto/config
-      # sudo mkdir -p /srv/docker/mosquitto/data
-      # sudo mkdir -p /srv/docker/mosquitto/log
       - /srv/docker/mosquitto/data:/mosquitto/data
       - /srv/docker/mosquitto/log:/mosquitto/log
       - ~/data/config/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
@@ -20,26 +16,24 @@ services:
     image: influxdb:latest
     restart: always
     container_name: influxdb
-    ports:
-      - 8086:8086
     env_file:
       - '~/data/config/env.influxdb'
     volumes:
-      # Data persistency
-      # sudo mkdir -p /srv/docker/influxdb/data
       - /srv/docker/influxdb/data:/var/lib/influxdb
 
-  telegraf:
-    image: telegraf:latest
+  nodered:
+    image: nodered/node-red-docker:slim
     restart: always
-    container_name: telegraf
+    container_name: nodered
+    user: '0'
     links:
       - influxdb
       - mosquitto
     env_file:
-      - '~/data/config/env.telegraf'
+      - '~/data/config/env.nodered'
     volumes:
-      - ~/data/config/telegraf.conf:/etc/telegraf/telegraf.conf:ro
+      - /srv/docker/nodered/data:/data
+      - ~/data/config/nodered_settings.js:/data/settings.js:ro
 
   grafana:
     image: grafana/grafana:latest
