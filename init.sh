@@ -4,13 +4,13 @@ echo "Starting initialization..."
 COL='\033[1;36m'
 NC='\033[0m' # No Color
 
-configPath=/root/data/config
-letsencryptPath=/root/data/letsencrypt
-certPath=/root/data/certs
-influxDbPath=/srv/docker/influxdb
-grafanaPath=/srv/docker/grafana
-noderedPath=/srv/docker/nodered
-mosquittoPath=/srv/docker/mosquitto
+configPath=./_iotserver/data/config
+letsencryptPath=./_iotserver/data/letsencrypt
+certPath=./_iotserver/data/certs
+influxDbPath=./_iotserver/docker/influxdb
+grafanaPath=./_iotserver/docker/grafana
+noderedPath=./_iotserver/docker/nodered
+mosquittoPath=./_iotserver/docker/mosquitto
 
 # Create necessary paths
 echo "Creating directories..."
@@ -36,9 +36,9 @@ touch $configPath/env.mosquitto
 touch $configPath/env.nodered
 
 # Copy HAProxy configuration file to config dir.
-cp -n ./haproxy.cfg /root/data/config/haproxy.cfg
-cp -n ./mosquitto.conf /root/data/config/mosquitto.conf
-cp -n ./nodered_settings.js /root/data/config/nodered_settings.js
+cp -n ./haproxy.cfg ./_iotserver/data/config/haproxy.cfg
+cp -n ./mosquitto.conf ./_iotserver/data/config/mosquitto.conf
+cp -n ./nodered_settings.js ./_iotserver/data/config/nodered_settings.js
 
 # Start docker stack
 echo "Starting Docker stack..."

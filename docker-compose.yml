@@ -6,20 +6,20 @@ services:
     restart: always
     container_name: mosquitto
     env_file:
-      - '~/data/config/env.mosquitto'
+      - './_iotserver/data/config/env.mosquitto'
     volumes:
-      - /srv/docker/mosquitto/data:/mosquitto/data
-      - /srv/docker/mosquitto/log:/mosquitto/log
-      - ~/data/config/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
+      - ./_iotserver/docker/mosquitto/data:/mosquitto/data
+      - ./_iotserver/docker/mosquitto/log:/mosquitto/log
+      - ./_iotserver/data/config/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
 
   influxdb:
     image: influxdb:latest
     restart: always
     container_name: influxdb
     env_file:
-      - '~/data/config/env.influxdb'
+      - './_iotserver/data/config/env.influxdb'
     volumes:
-      - /srv/docker/influxdb/data:/var/lib/influxdb
+      - ./_iotserver/docker/influxdb/data:/var/lib/influxdb
 
   nodered:
     image: nodered/node-red-docker:slim
@@ -30,26 +30,26 @@ services:
       - influxdb
       - mosquitto
     env_file:
-      - '~/data/config/env.nodered'
+      - './_iotserver/data/config/env.nodered'
     volumes:
-      - /srv/docker/nodered/data:/data
-      - ~/data/config/nodered_settings.js:/data/settings.js:ro
+      - ./_iotserver/docker/nodered/data:/data
+      - ./_iotserver/data/config/nodered_settings.js:/data/settings.js:ro
 
   grafana:
     image: grafana/grafana:latest
     restart: always
     container_name: grafana
     env_file:
-      - '~/data/config/env.grafana'
+      - './_iotserver/data/config/env.grafana'
     links:
       - influxdb
     volumes:
       # Data persistency
-      # sudo mkdir -p /srv/docker/grafana/data; chown 472:472 /srv/docker/grafana/data
-      - /srv/docker/grafana/data:/var/lib/grafana
+      # sudo mkdir -p ./_iotserver/docker/grafana/data; chown 472:472 ./_iotserver/docker/grafana/data
+      - ./_iotserver/docker/grafana/data:/var/lib/grafana
 
   haproxy-certbot:
-    image: nmarus/haproxy-certbot
+    image: bisand/haproxy-certbot
     container_name: haproxy-certbot
     restart: always
     ports:
@@ -63,9 +63,9 @@ services:
       - NET_ADMIN
     volumes:
       # Data persistency
-      # sudo mkdir -p ~/data/config
-      # sudo mkdir -p ~/data/letsencrypt
-      # sudo mkdir -p ~/data/certs
-      - ~/data/config:/config
-      - ~/data/letsencrypt:/etc/letsencrypt
-      - ~/data/certs:/usr/local/etc/haproxy/certs.d
+      # sudo mkdir -p ./_iotserver/data/config
+      # sudo mkdir -p ./_iotserver/data/letsencrypt
+      # sudo mkdir -p ./_iotserver/data/certs
+      - ./_iotserver/data/config:/config
+      - ./_iotserver/data/letsencrypt:/etc/letsencrypt
+      - ./_iotserver/data/certs:/usr/local/etc/haproxy/certs.d
