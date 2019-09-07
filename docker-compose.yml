@@ -66,6 +66,6 @@ services:
       # sudo mkdir -p ./_iotserver/data/config
       # sudo mkdir -p ./_iotserver/data/letsencrypt
       # sudo mkdir -p ./_iotserver/data/certs
-      - ./_iotserver/data/config:/config
+      - ./_iotserver/data/config/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg
       - ./_iotserver/data/letsencrypt:/etc/letsencrypt
       - ./_iotserver/data/certs:/usr/local/etc/haproxy/certs.d
