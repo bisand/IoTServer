@@ -1,7 +1,8 @@
 #!/bin/sh
 echo "Starting initialization..."
 
-install_folder="_iotserver"
+export INSTALL_FOLDER="./_iotserver"
+
 var="$1"
 # remove leading whitespace characters
 var="${var#"${var%%[![:space:]]*}"}"
@@ -9,47 +10,51 @@ var="${var#"${var%%[![:space:]]*}"}"
 var="${var%"${var##*[![:space:]]}"}"
 if [ ! -z "$var" ]
 then
-    install_folder=$var
+    INSTALL_FOLDER=$var
 fi
 
 COL='\033[1;36m'
 NC='\033[0m' # No Color
 
-config_path=${install_folder}/data/config
-letsencrypt_path=${install_folder}/data/letsencrypt
-cert_path=${install_folder}/data/certs
-influxdb_path=${install_folder}/docker/influxdb
-grafana_path=${install_folder}/docker/grafana
-nodered_path=${install_folder}/docker/nodered
-mosquitto_path=${install_folder}/docker/mosquitto
+HAPROXY_PATH=${INSTALL_FOLDER}/haproxy
+MOSQUITTO_PATH=${INSTALL_FOLDER}/mosquitto
+INFLUXDB_PATH=${INSTALL_FOLDER}/influxdb
+GRAFANA_PATH=${INSTALL_FOLDER}/grafana
+NODERED_PATH=${INSTALL_FOLDER}/nodered
 
 # Create necessary paths
 echo "Creating directories..."
-mkdir -p ${config_path}
-mkdir -p ${letsencrypt_path}
-mkdir -p ${cert_path}
-mkdir -p ${influxdb_path}/data
-mkdir -p ${grafana_path}/data
-mkdir -p ${nodered_path}/data
-mkdir -p ${mosquitto_path}/config
-mkdir -p ${mosquitto_path}/data
-mkdir -p ${mosquitto_path}/log
+mkdir -p ${HAPROXY_PATH}/config
+mkdir -p ${HAPROXY_PATH}/data
+mkdir -p ${HAPROXY_PATH}/certs
+mkdir -p ${MOSQUITTO_PATH}/config
+mkdir -p ${MOSQUITTO_PATH}/data
+mkdir -p ${MOSQUITTO_PATH}/log
+mkdir -p ${INFLUXDB_PATH}/config
+mkdir -p ${INFLUXDB_PATH}/data
+mkdir -p ${INFLUXDB_PATH}/log
+mkdir -p ${GRAFANA_PATH}/config
+mkdir -p ${GRAFANA_PATH}/data
+mkdir -p ${GRAFANA_PATH}/log
+mkdir -p ${NODERED_PATH}/data
+mkdir -p ${NODERED_PATH}/log
 
 # Set owner of Grafana data path to user 472
-chown -R 472:472 ${grafana_path}
-chown -R 1883:1883 ${mosquitto_path}
+chown -R 472:472 ${GRAFANA_PATH}
+chown -R 1883:1883 ${MOSQUITTO_PATH}
 
 # Create files for environment variables if they do not exist.
-echo "Creating config files..."
-touch ${config_path}/env.grafana
-touch ${config_path}/env.influxdb
-touch ${config_path}/env.mosquitto
-touch ${config_path}/env.nodered
+echo "Creating environment variables files..."
+touch ${GRAFANA_PATH}/config/env.grafana
+touch ${INFLUXDB_PATH}/config/env.influxdb
+touch ${MOSQUITTO_PATH}/config/env.mosquitto
+touch ${NODERED_PATH}/data/env.nodered
 
 # Copy HAProxy configuration file to config dir.
-cp -n ./haproxy.cfg ${install_folder}/data/config/haproxy.cfg
-cp -n ./mosquitto.conf ${install_folder}/data/config/mosquitto.conf
-cp -n ./nodered_settings.js ${install_folder}/data/config/nodered_settings.js
+echo "Copying default config files..."
+cp -n ./haproxy.cfg ${HAPROXY_PATH}/config/haproxy.cfg
+cp -n ./mosquitto.conf ${MOSQUITTO_PATH}/config/mosquitto.conf
+cp -n ./nodered_settings.js ${NODERED_PATH}/data/nodered_settings.js
 
 # Start docker stack
 echo "Starting Docker stack..."
@@ -59,25 +64,24 @@ docker-compose up -d --remove-orphans
 echo ""
 echo "Initialization complete."
 echo "**************************************************"
-echo -e "Grafana path:       ${COL}${grafana_path}${NC}"
-echo -e "InfluxDB path:      ${COL}${influxdb_path}${NC}"
-echo -e "Mosquitto path:     ${COL}${mosquitto_path}${NC}"
-echo -e "Node-Red path:      ${COL}${nodered_path}${NC}"
-echo -e "Config path:        ${COL}${config_path}${NC}"
-echo -e "Let's encrypt path: ${COL}${letsencrypt_path}${NC}"
-echo -e "Certificates path:  ${COL}${cert_path}${NC}"
+echo "HAProxy path:       ${COL}${HAPROXY_PATH}${NC}"
+echo "Mosquitto path:     ${COL}${MOSQUITTO_PATH}${NC}"
+echo "Grafana path:       ${COL}${GRAFANA_PATH}${NC}"
+echo "InfluxDB path:      ${COL}${INFLUXDB_PATH}${NC}"
+echo "Node-Red path:      ${COL}${NODERED_PATH}${NC}"
+echo "Certificates path:  ${COL}${HAPROXY_PATH}/certs${NC}"
 echo ""
 echo "To set environment variables in Grafana and InfluxDB, use following files:"
-echo -e "${COL}${config_path}/env.grafana${NC}"
-echo -e "${COL}${config_path}/env.influxdb${NC}"
-echo -e "${COL}${config_path}/env.mosquitto${NC}"
-echo -e "${COL}${config_path}/env.nodered${NC}"
+echo "${COL}${GRAFANA_PATH}/config/env.grafana${NC}"
+echo "${COL}${INFLUXDB_PATH}/config/env.influxdb${NC}"
+echo "${COL}${MOSQUITTO_PATH}/config/env.mosquitto${NC}"
+echo "${COL}${NODERED_PATH}/data/env.nodered${NC}"
 echo ""
 echo "For generating SSL certificates for HAProxy using HTTP challenge, use following example as template:"
-echo -e "${COL}sudo docker exec haproxy-certbot certbot-certonly --domain example.com --email user@example.com --dry-run${NC}"
+echo "${COL}sudo docker exec haproxy-certbot certbot-certonly --domain example.com --email user@example.com --dry-run${NC}"
 echo ""
 echo "For generating SSL certificates for HAProxy using DNS challenge, use following example as template:"
-echo -e "${COL}sudo docker exec -it haproxy-certbot certbot-certonly-manual --domain example.com --email user@example.com --dry-run${NC}"
+echo "${COL}sudo docker exec -it haproxy-certbot certbot-certonly-manual --domain example.com --email user@example.com --dry-run${NC}"
 echo ""
 echo "Default password for Node-Red is 'password'. For generating new password to use in config file, use the following example as a template:"
-echo -e "${COL}sudo docker exec -it nodered node -e \"console.log(require('bcryptjs').hashSync(process.argv[1], 8));\" password${NC}"
+echo "${COL}sudo docker exec -it nodered node \"console.log(require('bcryptjs').hashSync(process.argv[1], 8));\" password${NC}"
