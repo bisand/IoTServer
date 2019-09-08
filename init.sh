@@ -1,44 +1,55 @@
-#!/bin/bash
+#!/bin/sh
 echo "Starting initialization..."
+
+install_folder="_iotserver"
+var="$1"
+# remove leading whitespace characters
+var="${var#"${var%%[![:space:]]*}"}"
+# remove trailing whitespace characters
+var="${var%"${var##*[![:space:]]}"}"
+if [ ! -z "$var" ]
+then
+    install_folder=$var
+fi
 
 COL='\033[1;36m'
 NC='\033[0m' # No Color
 
-configPath=./_iotserver/data/config
-letsencryptPath=./_iotserver/data/letsencrypt
-certPath=./_iotserver/data/certs
-influxDbPath=./_iotserver/docker/influxdb
-grafanaPath=./_iotserver/docker/grafana
-noderedPath=./_iotserver/docker/nodered
-mosquittoPath=./_iotserver/docker/mosquitto
+config_path=${install_folder}/data/config
+letsencrypt_path=${install_folder}/data/letsencrypt
+cert_path=${install_folder}/data/certs
+influxdb_path=${install_folder}/docker/influxdb
+grafana_path=${install_folder}/docker/grafana
+nodered_path=${install_folder}/docker/nodered
+mosquitto_path=${install_folder}/docker/mosquitto
 
 # Create necessary paths
 echo "Creating directories..."
-mkdir -p $configPath
-mkdir -p $letsencryptPath
-mkdir -p $certPath
-mkdir -p $influxDbPath/data
-mkdir -p $grafanaPath/data
-mkdir -p $noderedPath/data
-mkdir -p $mosquittoPath/config
-mkdir -p $mosquittoPath/data
-mkdir -p $mosquittoPath/log
+mkdir -p ${config_path}
+mkdir -p ${letsencrypt_path}
+mkdir -p ${cert_path}
+mkdir -p ${influxdb_path}/data
+mkdir -p ${grafana_path}/data
+mkdir -p ${nodered_path}/data
+mkdir -p ${mosquitto_path}/config
+mkdir -p ${mosquitto_path}/data
+mkdir -p ${mosquitto_path}/log
 
 # Set owner of Grafana data path to user 472
-chown -R 472:472 $grafanaPath
-chown -R 1883:1883 $mosquittoPath
+chown -R 472:472 ${grafana_path}
+chown -R 1883:1883 ${mosquitto_path}
 
 # Create files for environment variables if they do not exist.
 echo "Creating config files..."
-touch $configPath/env.grafana
-touch $configPath/env.influxdb
-touch $configPath/env.mosquitto
-touch $configPath/env.nodered
+touch ${config_path}/env.grafana
+touch ${config_path}/env.influxdb
+touch ${config_path}/env.mosquitto
+touch ${config_path}/env.nodered
 
 # Copy HAProxy configuration file to config dir.
-cp -n ./haproxy.cfg ./_iotserver/data/config/haproxy.cfg
-cp -n ./mosquitto.conf ./_iotserver/data/config/mosquitto.conf
-cp -n ./nodered_settings.js ./_iotserver/data/config/nodered_settings.js
+cp -n ./haproxy.cfg ${install_folder}/data/config/haproxy.cfg
+cp -n ./mosquitto.conf ${install_folder}/data/config/mosquitto.conf
+cp -n ./nodered_settings.js ${install_folder}/data/config/nodered_settings.js
 
 # Start docker stack
 echo "Starting Docker stack..."
@@ -48,19 +59,19 @@ docker-compose up -d --remove-orphans
 echo ""
 echo "Initialization complete."
 echo "**************************************************"
-echo -e "Grafana path:       ${COL}$grafanaPath${NC}"
-echo -e "InfluxDB path:      ${COL}$influxDbPath${NC}"
-echo -e "Mosquitto path:     ${COL}$mosquittoPath${NC}"
-echo -e "Node-Red path:      ${COL}$noderedPath${NC}"
-echo -e "Config path:        ${COL}$configPath${NC}"
-echo -e "Let's encrypt path: ${COL}$letsencryptPath${NC}"
-echo -e "Certificates path:  ${COL}$certPath${NC}"
+echo -e "Grafana path:       ${COL}${grafana_path}${NC}"
+echo -e "InfluxDB path:      ${COL}${influxdb_path}${NC}"
+echo -e "Mosquitto path:     ${COL}${mosquitto_path}${NC}"
+echo -e "Node-Red path:      ${COL}${nodered_path}${NC}"
+echo -e "Config path:        ${COL}${config_path}${NC}"
+echo -e "Let's encrypt path: ${COL}${letsencrypt_path}${NC}"
+echo -e "Certificates path:  ${COL}${cert_path}${NC}"
 echo ""
 echo "To set environment variables in Grafana and InfluxDB, use following files:"
-echo -e "${COL}$configPath/env.grafana${NC}"
-echo -e "${COL}$configPath/env.influxdb${NC}"
-echo -e "${COL}$configPath/env.mosquitto${NC}"
-echo -e "${COL}$configPath/env.nodered${NC}"
+echo -e "${COL}${config_path}/env.grafana${NC}"
+echo -e "${COL}${config_path}/env.influxdb${NC}"
+echo -e "${COL}${config_path}/env.mosquitto${NC}"
+echo -e "${COL}${config_path}/env.nodered${NC}"
 echo ""
 echo "For generating SSL certificates for HAProxy using HTTP challenge, use following example as template:"
 echo -e "${COL}sudo docker exec haproxy-certbot certbot-certonly --domain example.com --email user@example.com --dry-run${NC}"
