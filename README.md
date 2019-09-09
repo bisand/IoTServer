@@ -11,15 +11,20 @@ You should be up and running with your server stack.
 
 For generating ssl certificates for your web site, please follow the instructions below. For this to work, you will have to point your domain to the server where you have installed the server stack.
 
-Generate SSL certificates:
-```
+### Generate SSL certificates using HTTP challenge:
+```sh
 sudo docker exec haproxy-certbot certbot-certonly --domain example.com --email user@example.com --dry-run
+```
+
+### Generate SSL certificates using manual DNS challenge:
+```sh
+sudo docker exec -it haproxy-certbot certbot-certonly-manual --domain example.com --email user@example.com --dry-run
 ```
 
 Remember to replace **domain** and **email** with your own, and remove --dry-run when testing is complete.
 
 Make the newly created certificate available to HAProxy:
-```
+```sh
 sudo cat /root/data/letsencrypt/archive/example.com/fullchain1.pem /root/data/letsencrypt/archive/example.com/privkey1.pem > /root/data/certs/example.com.pem
 ```
 (Replace example.com with your own domain name)
