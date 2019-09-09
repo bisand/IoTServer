@@ -13,6 +13,8 @@ then
     INSTALL_FOLDER=$var
 fi
 
+echo "INSTALL_FOLDER=${INSTALL_FOLDER}" > .env
+
 COL='\033[1;36m'
 NC='\033[0m' # No Color
 
@@ -85,3 +87,9 @@ echo "${COL}sudo docker exec -it haproxy-certbot certbot-certonly-manual --domai
 echo ""
 echo "Default password for Node-Red is 'password'. For generating new password to use in config file, use the following example as a template:"
 echo "${COL}sudo docker exec -it nodered node \"console.log(require('bcryptjs').hashSync(process.argv[1], 8));\" password${NC}"
+echo ""
+echo "Apply changes to HAProxy:"
+echo "${COL}sudo docker exec haproxy-certbot haproxy-refresh${NC}"
+echo ""
+echo ""
+
