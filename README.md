@@ -18,7 +18,7 @@ sudo docker exec haproxy-certbot certbot-certonly --domain example.com --email u
 
 ### Generate SSL certificates using manual DNS challenge:
 ```sh
-sudo docker exec -it haproxy-certbot certbot-certonly-manual --domain example.com --email user@example.com --dry-run
+sudo docker exec -it haproxy-certbot certbot-certonly-dns --domain example.com --email user@example.com --dry-run
 ```
 
 > Remember to replace **domain** and **email** with your own, and remove --dry-run when testing is complete.
