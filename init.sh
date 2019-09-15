@@ -83,7 +83,7 @@ echo "For generating SSL certificates for HAProxy using HTTP challenge, use foll
 echo "${COL}sudo docker exec haproxy-certbot certbot-certonly --domain example.com --email user@example.com --dry-run${NC}"
 echo ""
 echo "For generating SSL certificates for HAProxy using DNS challenge, use following example as template:"
-echo "${COL}sudo docker exec -it haproxy-certbot certbot-certonly-manual --domain example.com --email user@example.com --dry-run${NC}"
+echo "${COL}sudo docker exec -it haproxy-certbot certbot-certonly-dns --domain example.com --email user@example.com --dry-run${NC}"
 echo ""
 echo "Default password for Node-Red is 'password'. For generating new password to use in config file, use the following example as a template:"
 echo "${COL}sudo docker exec nodered node -e \"console.log(require('bcryptjs').hashSync(process.argv[1], 8));\" your-password-here${NC}"
