@@ -63,7 +63,7 @@ cp -n ./haproxy.cfg ${HAPROXY_PATH}/config/haproxy.cfg
 cp -n ./mosquitto.conf ${MOSQUITTO_PATH}/config/mosquitto.conf
 cp -n ./nodered_settings.js ${NODERED_PATH}/data/nodered_settings.js
 cp -n ./portfolio_allegutta.json ${ALLEGUTTA_PATH}/data/portfolio_allegutta.json
-cp -n ./allegutta.server.config.json ${NODERED_PATH}/config/server.config.json
+cp -n ./allegutta.server.config.json ${ALLEGUTTA_PATH}/config/server.config.json
 
 # Start docker stack
 echo "Starting Docker stack..."
