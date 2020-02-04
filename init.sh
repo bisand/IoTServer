@@ -23,6 +23,7 @@ MOSQUITTO_PATH=${INSTALL_FOLDER}/mosquitto
 INFLUXDB_PATH=${INSTALL_FOLDER}/influxdb
 GRAFANA_PATH=${INSTALL_FOLDER}/grafana
 NODERED_PATH=${INSTALL_FOLDER}/nodered
+ALLEGUTTA_PATH=${INSTALL_FOLDER}/allegutta
 
 # Create necessary paths
 echo "Creating directories..."
@@ -40,6 +41,9 @@ mkdir -p ${GRAFANA_PATH}/data
 mkdir -p ${GRAFANA_PATH}/log
 mkdir -p ${NODERED_PATH}/data
 mkdir -p ${NODERED_PATH}/log
+mkdir -p ${ALLEGUTTA_PATH}/config
+mkdir -p ${ALLEGUTTA_PATH}/data
+mkdir -p ${ALLEGUTTA_PATH}/log
 
 # Set owner of Grafana data path to user 472
 chown -R 472:472 ${GRAFANA_PATH}
@@ -51,15 +55,19 @@ touch ${GRAFANA_PATH}/config/env.grafana
 touch ${INFLUXDB_PATH}/config/env.influxdb
 touch ${MOSQUITTO_PATH}/config/env.mosquitto
 touch ${NODERED_PATH}/data/env.nodered
+touch ${ALLEGUTTA_PATH}/config/env.allegutta
 
 # Copy HAProxy configuration file to config dir.
 echo "Copying default config files..."
 cp -n ./haproxy.cfg ${HAPROXY_PATH}/config/haproxy.cfg
 cp -n ./mosquitto.conf ${MOSQUITTO_PATH}/config/mosquitto.conf
 cp -n ./nodered_settings.js ${NODERED_PATH}/data/nodered_settings.js
+cp -n ./portfolio_allegutta.json ${ALLEGUTTA_PATH}/data/portfolio_allegutta.json
+cp -n ./allegutta.server.config.json ${NODERED_PATH}/config/server.config.json
 
 # Start docker stack
 echo "Starting Docker stack..."
+docker-dompose pull
 docker-compose up -d --remove-orphans
 
 # General info.
@@ -71,6 +79,7 @@ echo "Mosquitto path:     ${COL}${MOSQUITTO_PATH}${NC}"
 echo "Grafana path:       ${COL}${GRAFANA_PATH}${NC}"
 echo "InfluxDB path:      ${COL}${INFLUXDB_PATH}${NC}"
 echo "Node-Red path:      ${COL}${NODERED_PATH}${NC}"
+echo "AlleGutta path:     ${COL}${ALLGUTTA_PATH}${NC}"
 echo "Certificates path:  ${COL}${HAPROXY_PATH}/certs${NC}"
 echo ""
 echo "To set environment variables in Grafana and InfluxDB, use following files:"
@@ -78,6 +87,7 @@ echo "${COL}${GRAFANA_PATH}/config/env.grafana${NC}"
 echo "${COL}${INFLUXDB_PATH}/config/env.influxdb${NC}"
 echo "${COL}${MOSQUITTO_PATH}/config/env.mosquitto${NC}"
 echo "${COL}${NODERED_PATH}/data/env.nodered${NC}"
+echo "${COL}${ALLEGUTTA_PATH}/data/env.allegutta${NC}"
 echo ""
 echo "For generating SSL certificates for HAProxy using HTTP challenge, use following example as template:"
 echo "${COL}sudo docker exec haproxy-certbot certbot-certonly --domain example.com --email user@example.com --dry-run${NC}"

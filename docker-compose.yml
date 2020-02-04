@@ -47,6 +47,18 @@ services:
       # sudo mkdir -p ${INSTALL_FOLDER}/docker/grafana/data; chown 472:472 ${INSTALL_FOLDER}/docker/grafana/data
       - ${INSTALL_FOLDER}/grafana/data:/var/lib/grafana
 
+  allegutta-portfolio:
+    image: bisand/allegutta-portfolio:latest
+    restart: always
+    container_name: allegutta-portfolio
+    env_file:
+      - '${INSTALL_FOLDER}/allegutta/config/env.allegutta'
+    volumes:
+      # Data persistency
+      - ${INSTALL_FOLDER}/allegutta/data:/usr/src/app/data
+      - ${INSTALL_FOLDER}/allegutta/log:/usr/src/app/log
+      - ${INSTALL_FOLDER}/allegutta/config:/usr/src/app/config
+
   haproxy-certbot:
     image: bisand/haproxy-certbot
     container_name: haproxy-certbot
