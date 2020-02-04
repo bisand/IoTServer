@@ -67,7 +67,7 @@ cp -n ./allegutta.server.config.json ${ALLEGUTTA_PATH}/config/server.config.json
 
 # Start docker stack
 echo "Starting Docker stack..."
-docker-dompose pull
+docker-compose pull
 docker-compose up -d --remove-orphans
 
 # General info.
