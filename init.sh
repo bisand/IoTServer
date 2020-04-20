@@ -60,6 +60,7 @@ cp -n ./nodered_settings.js ${NODERED_PATH}/data/nodered_settings.js
 
 # Start docker stack
 echo "Starting Docker stack..."
+docker-compose pull
 docker-compose up -d --remove-orphans
 
 # General info.
