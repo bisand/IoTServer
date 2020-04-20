@@ -22,7 +22,7 @@ services:
       - ${INSTALL_FOLDER}/influxdb/data:/var/lib/influxdb
 
   nodered:
-    image: nodered/node-red
+    image: nodered/node-red:latest
     restart: always
     container_name: nodered
     user: '0'

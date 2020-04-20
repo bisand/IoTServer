@@ -1,7 +1,7 @@
 #!/bin/sh
 echo "Starting initialization..."
 
-export INSTALL_FOLDER="./_iotserver"
+export INSTALL_FOLDER="./.iotserver"
 
 var="$1"
 # remove leading whitespace characters
