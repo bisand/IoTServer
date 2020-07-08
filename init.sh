@@ -11,9 +11,16 @@ var="${var%"${var##*[![:space:]]}"}"
 if [ ! -z "$var" ]
 then
     INSTALL_FOLDER=$var
+else
+    if [ -f "./.env" ]; then
+        . ./.env
+    fi
 fi
 
 echo "INSTALL_FOLDER=${INSTALL_FOLDER}" > .env
+
+# echo "$INSTALL_FOLDER"
+# exit 0
 
 COL='\033[1;36m'
 NC='\033[0m' # No Color
