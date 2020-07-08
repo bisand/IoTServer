@@ -14,10 +14,6 @@
  * limitations under the License.
  **/
 
-// The `https` setting requires the `fs` module. Uncomment the following
-// to make it available:
-//var fs = require("fs");
-
 module.exports = {
     // the tcp port that the Node-RED web server is listening on
     uiPort: process.env.PORT || 1880,
@@ -55,7 +51,7 @@ module.exports = {
     // The maximum number of messages nodes will buffer internally as part of their
     // operation. This applies across a range of nodes that operate on message sequences.
     //  defaults to no limit. A value of 0 also means no limit is applied.
-    //nodeMaxMessageBufferLength: 0,
+    //nodeMessageBufferMaxLength: 0,
 
     // To disable the option for using local files for storing keys and certificates in the TLS configuration
     //  node, set this to true
@@ -79,11 +75,12 @@ module.exports = {
     // lost.
     //credentialSecret: "a-secret-key",
 
-    // By default, all user data is stored in the Node-RED install directory. To
-    // use a different location, the following property can be used
+    // By default, all user data is stored in a directory called `.node-red` under
+    // the user's home directory. To use a different location, the following
+    // property can be used
     //userDir: '/home/nol/.node-red/',
 
-    // Node-RED scans the `nodes` directory in the install directory to find nodes.
+    // Node-RED scans the `nodes` directory in the userDir to find local node files.
     // The following property can be used to specify an additional directory to scan.
     //nodesDir: '/home/nol/.node-red/nodes',
 
@@ -120,12 +117,12 @@ module.exports = {
     // To password protect the Node-RED editor and admin API, the following
     // property can be used. See http://nodered.org/docs/security.html for details.
     adminAuth: {
-        type: "credentials",
-        users: [{
-            username: "admin",
-            password: "$2a$08$zZWtXTja0fB1pzD4sHCMyOCMYz2Z6dNbM6tl8sJogENOMcxWV9DN.",
-            permissions: "*"
-        }]
+       type: "credentials",
+       users: [{
+           username: "admin",
+           password: "$2a$08$zZWtXTja0fB1pzD4sHCMyOCMYz2Z6dNbM6tl8sJogENOMcxWV9DN.",
+           permissions: "*"
+       }]
     },
 
     // To password protect the node-defined HTTP endpoints (httpNodeRoot), or
@@ -138,13 +135,30 @@ module.exports = {
     // The following property can be used to enable HTTPS
     // See http://nodejs.org/api/https.html#https_https_createserver_options_requestlistener
     // for details on its contents.
-    // See the comment at the top of this file on how to load the `fs` module used by
-    // this setting.
-    //
+    // This property can be either an object, containing both a (private) key and a (public) certificate,
+    // or a function that returns such an object:
+    //// https object:
     //https: {
-    //    key: fs.readFileSync('privatekey.pem'),
-    //    cert: fs.readFileSync('certificate.pem')
+    //  key: require("fs").readFileSync('privkey.pem'),
+    //  cert: require("fs").readFileSync('cert.pem')
     //},
+    ////https function:
+    // https: function() {
+    //     // This function should return the options object, or a Promise
+    //     // that resolves to the options object
+    //     return {
+    //         key: require("fs").readFileSync('privkey.pem'),
+    //         cert: require("fs").readFileSync('cert.pem')
+    //     }
+    // },
+
+    // The following property can be used to refresh the https settings at a
+    // regular time interval in hours.
+    // This requires:
+    //   - the `https` setting to be a function that can be called to get
+    //     the refreshed settings.
+    //   - Node.js 11 or later.
+    //httpsRefreshInterval : 12,
 
     // The following property can be used to cause insecure HTTP connections to
     // be redirected to HTTPS.
@@ -181,6 +195,22 @@ module.exports = {
     //    next();
     //},
 
+
+    // The following property can be used to add a custom middleware function
+    // in front of all admin http routes. For example, to set custom http
+    // headers
+    // httpAdminMiddleware: function(req,res,next) {
+    //    // Set the X-Frame-Options header to limit where the editor
+    //    // can be embedded
+    //    //res.set('X-Frame-Options', 'sameorigin');
+    //    next();
+    // },
+
+    // The following property can be used to pass custom options to the Express.js
+    // server used by Node-RED. For a full list of available options, refer
+    // to http://expressjs.com/en/api.html#app.settings.table
+    //httpServerOptions: { },
+
     // The following property can be used to verify websocket connection attempts.
     // This allows, for example, the HTTP request headers to be checked to ensure
     // they include valid authentication information.
@@ -200,18 +230,27 @@ module.exports = {
     //    //   - reason: if result is false, the HTTP reason string to return
     //},
 
-    // Anything in this hash is globally available to all functions.
-    // It is accessed as context.global.
-    // eg:
+    // The following property can be used to seed Global Context with predefined
+    // values. This allows extra node modules to be made available with the
+    // Function node.
+    // For example,
     //    functionGlobalContext: { os:require('os') }
     // can be accessed in a function block as:
-    //    context.global.os
-
+    //    global.get("os")
     functionGlobalContext: {
         // os:require('os'),
         // jfive:require("johnny-five"),
         // j5board:require("johnny-five").Board({repl:false})
     },
+    // `global.keys()` returns a list of all properties set in global context.
+    // This allows them to be displayed in the Context Sidebar within the editor.
+    // In some circumstances it is not desirable to expose them to the editor. The
+    // following property can be used to hide any property set in `functionGlobalContext`
+    // from being list by `global.keys()`.
+    // By default, the property is set to false to avoid accidental exposure of
+    // their values. Setting this to true will cause the keys to be listed.
+    exportGlobalContextKeys: false,
+
 
     // Context Storage
     // The following property can be used to enable context storage. The configuration
@@ -228,7 +267,7 @@ module.exports = {
     // palette. If a node's category is not in the list, the category will get
     // added to the end of the palette.
     // If not set, the following default order is used:
-    //paletteCategories: ['subflows', 'input', 'output', 'function', 'social', 'mobile', 'storage', 'analysis', 'advanced'],
+    //paletteCategories: ['subflows', 'common', 'function', 'network', 'sequence', 'parser', 'storage'],
 
     // Configure the logging output
     logging: {
@@ -256,5 +295,5 @@ module.exports = {
             // To enable the Projects feature, set this value to true
             enabled: false
         }
-    },
+    }
 }

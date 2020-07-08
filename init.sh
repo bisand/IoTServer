@@ -1,35 +1,80 @@
 #!/bin/sh
+
+remove_whitespace() {
+    local var="$1"
+    # remove leading whitespace characters
+    var="${var#"${var%%[![:space:]]*}"}"
+    # remove trailing whitespace characters
+    var="${var%"${var##*[![:space:]]}"}"
+    echo "$var"
+}
+
 echo "Starting initialization..."
 
-export INSTALL_FOLDER="./.iotserver"
+export INSTALL_DIRECTORY="./.iotserver"
+export PORT_HAPROXY_HTTP=80
+export PORT_HAPROXY_HTTPS=443
+export PORT_HAPROXY_MQTT=1883
+export PORT_HAPROXY_MQTTS=8883
+export COPY_FLAGS="-n"
 
-var="$1"
-# remove leading whitespace characters
-var="${var#"${var%%[![:space:]]*}"}"
-# remove trailing whitespace characters
-var="${var%"${var##*[![:space:]]}"}"
-if [ ! -z "$var" ]
-then
-    INSTALL_FOLDER=$var
-else
-    if [ -f "./.env" ]; then
-        . ./.env
-    fi
+if [ -f "./.env" ]; then
+    . ./.env
 fi
 
-echo "INSTALL_FOLDER=${INSTALL_FOLDER}" > .env
+while [ "$#" -gt 0 ]; do
+    case $1 in
+    -d | --install-directory)
+        INSTALL_DIRECTORY="$2"
+        ;;
+    -h | --http-port)
+        PORT_HAPROXY_HTTP=$2
+        ;;
+    -s | --https-port)
+        PORT_HAPROXY_HTTPS=$2
+        ;;
+    -m | --mqtt-port)
+        PORT_HAPROXY_MQTT=$2
+        ;;
+    -q | --mqtts-port)
+        PORT_HAPROXY_MQTTS=$2
+        ;;
+    -f | --force-overwrite)
+        COPY_FLAGS="-f"
+        ;;
+    esac
+    shift
+done
 
-# echo "$INSTALL_FOLDER"
+INSTALL_DIRECTORY=$(remove_whitespace "$INSTALL_DIRECTORY")
+PORT_HAPROXY_HTTP=$(remove_whitespace $PORT_HAPROXY_HTTP)
+PORT_HAPROXY_HTTPS=$(remove_whitespace $PORT_HAPROXY_HTTPS)
+PORT_HAPROXY_MQTT=$(remove_whitespace $PORT_HAPROXY_MQTT)
+PORT_HAPROXY_MQTTS=$(remove_whitespace $PORT_HAPROXY_MQTTS)
+
+cat >./.env <<EOF
+INSTALL_DIRECTORY="${INSTALL_DIRECTORY}"
+PORT_HAPROXY_HTTP=${PORT_HAPROXY_HTTP}
+PORT_HAPROXY_HTTPS=${PORT_HAPROXY_HTTPS}
+PORT_HAPROXY_MQTT=${PORT_HAPROXY_MQTT}
+PORT_HAPROXY_MQTTS=${PORT_HAPROXY_MQTTS}
+EOF
+
+echo "Install directory: ${INSTALL_DIRECTORY}"
+echo "HAProxy HTTP port: ${PORT_HAPROXY_HTTP}"
+echo "HAProxy HTTPS port: ${PORT_HAPROXY_HTTPS}"
+echo "HAProxy MQTT port: ${PORT_HAPROXY_MQTT}"
+echo "HAProxy MQTTS port: ${PORT_HAPROXY_MQTTS}"
 # exit 0
 
 COL='\033[1;36m'
 NC='\033[0m' # No Color
 
-HAPROXY_PATH=${INSTALL_FOLDER}/haproxy
-MOSQUITTO_PATH=${INSTALL_FOLDER}/mosquitto
-INFLUXDB_PATH=${INSTALL_FOLDER}/influxdb
-GRAFANA_PATH=${INSTALL_FOLDER}/grafana
-NODERED_PATH=${INSTALL_FOLDER}/nodered
+HAPROXY_PATH=${INSTALL_DIRECTORY}/haproxy
+MOSQUITTO_PATH=${INSTALL_DIRECTORY}/mosquitto
+INFLUXDB_PATH=${INSTALL_DIRECTORY}/influxdb
+GRAFANA_PATH=${INSTALL_DIRECTORY}/grafana
+NODERED_PATH=${INSTALL_DIRECTORY}/nodered
 ALLEGUTTA_PATH=${INSTALL_FOLDER}/allegutta
 
 # Create necessary paths
@@ -64,11 +109,18 @@ touch ${MOSQUITTO_PATH}/config/env.mosquitto
 touch ${NODERED_PATH}/data/env.nodered
 touch ${ALLEGUTTA_PATH}/config/env.allegutta
 
+cat >${HAPROXY_PATH}/config/env.haproxy <<EOF
+PORT_HAPROXY_HTTP=${PORT_HAPROXY_HTTP}
+PORT_HAPROXY_HTTPS=${PORT_HAPROXY_HTTPS}
+PORT_HAPROXY_MQTT=${PORT_HAPROXY_MQTT}
+PORT_HAPROXY_MQTTS=${PORT_HAPROXY_MQTTS}
+EOF
+
 # Copy HAProxy configuration file to config dir.
 echo "Copying default config files..."
-cp -n ./haproxy.cfg ${HAPROXY_PATH}/config/haproxy.cfg
-cp -n ./mosquitto.conf ${MOSQUITTO_PATH}/config/mosquitto.conf
-cp -n ./nodered_settings.js ${NODERED_PATH}/data/nodered_settings.js
+cp ${COPY_FLAGS} ./haproxy.cfg ${HAPROXY_PATH}/config/haproxy.cfg
+cp ${COPY_FLAGS} ./mosquitto.conf ${MOSQUITTO_PATH}/config/mosquitto.conf
+cp ${COPY_FLAGS} ./nodered_settings.js ${NODERED_PATH}/data/settings.js
 cp -n ./portfolio_allegutta.json ${ALLEGUTTA_PATH}/data/portfolio_allegutta.json
 cp -n ./allegutta.server.config.json ${ALLEGUTTA_PATH}/config/server.config.json
 
@@ -76,6 +128,10 @@ cp -n ./allegutta.server.config.json ${ALLEGUTTA_PATH}/config/server.config.json
 echo "Starting Docker stack..."
 docker-compose pull
 docker-compose up -d --remove-orphans
+
+if [ "${COPY_FLAGS}" = "-f" ]; then
+    docker-compose restart
+fi
 
 # General info.
 echo ""
