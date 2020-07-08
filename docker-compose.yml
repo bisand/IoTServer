@@ -52,12 +52,12 @@ services:
     restart: always
     container_name: allegutta-portfolio
     env_file:
-      - '${INSTALL_FOLDER}/allegutta/config/env.allegutta'
+      - '${INSTALL_DIRECTORY}/allegutta/config/env.allegutta'
     volumes:
       # Data persistency
-      - ${INSTALL_FOLDER}/allegutta/data:/usr/src/app/data
-      - ${INSTALL_FOLDER}/allegutta/log:/usr/src/app/log
-      - ${INSTALL_FOLDER}/allegutta/config:/usr/src/app/config
+      - ${INSTALL_DIRECTORY}/allegutta/data:/usr/src/app/data
+      - ${INSTALL_DIRECTORY}/allegutta/log:/usr/src/app/log
+      - ${INSTALL_DIRECTORY}/allegutta/config:/usr/src/app/config
 
   haproxy-certbot:
     image: bisand/haproxy-certbot

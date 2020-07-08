@@ -75,7 +75,7 @@ MOSQUITTO_PATH=${INSTALL_DIRECTORY}/mosquitto
 INFLUXDB_PATH=${INSTALL_DIRECTORY}/influxdb
 GRAFANA_PATH=${INSTALL_DIRECTORY}/grafana
 NODERED_PATH=${INSTALL_DIRECTORY}/nodered
-ALLEGUTTA_PATH=${INSTALL_FOLDER}/allegutta
+ALLEGUTTA_PATH=${INSTALL_DIRECTORY}/allegutta
 
 # Create necessary paths
 echo "Creating directories..."
@@ -121,8 +121,8 @@ echo "Copying default config files..."
 cp ${COPY_FLAGS} ./haproxy.cfg ${HAPROXY_PATH}/config/haproxy.cfg
 cp ${COPY_FLAGS} ./mosquitto.conf ${MOSQUITTO_PATH}/config/mosquitto.conf
 cp ${COPY_FLAGS} ./nodered_settings.js ${NODERED_PATH}/data/settings.js
-cp -n ./portfolio_allegutta.json ${ALLEGUTTA_PATH}/data/portfolio_allegutta.json
-cp -n ./allegutta.server.config.json ${ALLEGUTTA_PATH}/config/server.config.json
+cp ${COPY_FLAGS} ./portfolio_allegutta.json ${ALLEGUTTA_PATH}/data/portfolio_allegutta.json
+cp ${COPY_FLAGS} ./allegutta.server.config.json ${ALLEGUTTA_PATH}/config/server.config.json
 
 # Start docker stack
 echo "Starting Docker stack..."
