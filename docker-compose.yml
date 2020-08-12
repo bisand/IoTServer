@@ -35,7 +35,7 @@ services:
       - ${INSTALL_DIRECTORY}/nodered/data:/data
 
   grafana:
-    image: grafana/grafana:latest
+    image: grafana/grafana:7.0.6
     restart: always
     container_name: grafana
     env_file:
