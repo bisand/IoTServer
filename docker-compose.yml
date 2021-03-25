@@ -13,7 +13,7 @@ services:
       - ${INSTALL_DIRECTORY}/mosquitto/config/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
 
   influxdb:
-    image: influxdb:alpine
+    image: influxdb:1.8-alpine
     restart: always
     container_name: influxdb
     env_file:
