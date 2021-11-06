@@ -1,4 +1,4 @@
-version: "3"
+version: '3.4'
 
 services:
   mosquitto:
@@ -51,6 +51,8 @@ services:
     image: bisand/allegutta-portfolio:latest
     restart: always
     container_name: allegutta-portfolio
+    cap_add:
+      - SYS_ADMIN
     env_file:
       - '${INSTALL_DIRECTORY}/allegutta/config/env.allegutta'
     volumes:
