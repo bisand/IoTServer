@@ -1,4 +1,4 @@
-version: "3"
+version: '3.4'
 
 services:
   mosquitto:
@@ -13,7 +13,7 @@ services:
       - ${INSTALL_DIRECTORY}/mosquitto/config/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
 
   influxdb:
-    image: influxdb:alpine
+    image: influxdb:1.8-alpine
     restart: always
     container_name: influxdb
     env_file:
@@ -35,7 +35,7 @@ services:
       - ${INSTALL_DIRECTORY}/nodered/data:/data
 
   grafana:
-    image: grafana/grafana:latest
+    image: grafana/grafana:7.0.6 # Newer versions tend to not work on legacy IOS devices.
     restart: always
     container_name: grafana
     env_file:
@@ -46,6 +46,20 @@ services:
       # Data persistency
       # sudo mkdir -p ${INSTALL_DIRECTORY}/docker/grafana/data; chown 472:472 ${INSTALL_DIRECTORY}/docker/grafana/data
       - ${INSTALL_DIRECTORY}/grafana/data:/var/lib/grafana
+
+  allegutta-portfolio:
+    image: bisand/allegutta-portfolio:latest
+    restart: always
+    container_name: allegutta-portfolio
+    cap_add:
+      - SYS_ADMIN
+    env_file:
+      - '${INSTALL_DIRECTORY}/allegutta/config/env.allegutta'
+    volumes:
+      # Data persistency
+      - ${INSTALL_DIRECTORY}/allegutta/data:/usr/src/app/data
+      - ${INSTALL_DIRECTORY}/allegutta/log:/usr/src/app/log
+      - ${INSTALL_DIRECTORY}/allegutta/config:/usr/src/app/config
 
   haproxy-certbot:
     image: bisand/haproxy-certbot
