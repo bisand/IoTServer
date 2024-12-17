@@ -3,75 +3,71 @@ version: '3.4'
 services:
   mosquitto:
     image: eclipse-mosquitto:latest
-    restart: always
-    container_name: mosquitto
-    env_file:
-      - '${INSTALL_DIRECTORY}/mosquitto/config/env.mosquitto'
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
     volumes:
-      - ${INSTALL_DIRECTORY}/mosquitto/data:/mosquitto/data
-      - ${INSTALL_DIRECTORY}/mosquitto/log:/mosquitto/log
-      - ${INSTALL_DIRECTORY}/mosquitto/config/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
+      - /mnt/docker/iotserver/mosquitto/data:/mosquitto/data
+      - /mnt/docker/iotserver/mosquitto/log:/mosquitto/log
+      - /mnt/docker/iotserver/mosquitto/config/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
+    networks:
+      - app-net
+      - backend-network
 
   influxdb:
     image: influxdb:1.8-alpine
-    restart: always
-    container_name: influxdb
-    env_file:
-      - '${INSTALL_DIRECTORY}/influxdb/config/env.influxdb'
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
     volumes:
-      - ${INSTALL_DIRECTORY}/influxdb/data:/var/lib/influxdb
+      - /mnt/docker/iotserver/influxdb/data:/var/lib/influxdb
+    networks:
+      - app-net
+      - backend-network
 
   nodered:
     image: nodered/node-red:latest
-    restart: always
-    container_name: nodered
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
     user: '0'
     links:
       - influxdb
       - mosquitto
     ports:
       - 1880:1880
-    env_file:
-      - '${INSTALL_DIRECTORY}/nodered/data/env.nodered'
     volumes:
-      - ${INSTALL_DIRECTORY}/nodered/data:/data
+      - /mnt/docker/iotserver/nodered/data:/data
+    networks:
+      - app-net
+      - backend-network
 
   grafana:
     image: grafana/grafana:7.0.6 # Newer versions tend to not work on legacy IOS devices.
-    restart: always
-    container_name: grafana
-    env_file:
-      - '${INSTALL_DIRECTORY}/grafana/config/env.grafana'
+    deploy:
+      replicas: 2
+      restart_policy:
+        condition: on-failure
+    environment:
+      GF_AUTH_ANONYMOUS_ENABLED: true
+      GF_AUTH_ANONYMOUS_ORG_ROLE: Viewer
+      GF_SECURITY_ALLOW_EMBEDDING: true
     links:
       - influxdb
     ports:
       - 3000:3000
     volumes:
       # Data persistency
-      # sudo mkdir -p ${INSTALL_DIRECTORY}/docker/grafana/data; chown 472:472 ${INSTALL_DIRECTORY}/docker/grafana/data
-      - ${INSTALL_DIRECTORY}/grafana/data:/var/lib/grafana
+      - /mnt/docker/iotserver/grafana/data:/var/lib/grafana
+    networks:
+      - app-net
+      - backend-network
 
-#  haproxy-certbot:
-#    image: bisand/haproxy-certbot
-#    container_name: haproxy-certbot
-#    restart: always
-#    env_file:
-#      - '${INSTALL_DIRECTORY}/haproxy/config/env.haproxy'
-#    ports:
-#      - ${PORT_HAPROXY_HTTP}:80
-#      - ${PORT_HAPROXY_HTTPS}:443
-#      - ${PORT_HAPROXY_MQTT}:${PORT_HAPROXY_MQTT}
-#      - ${PORT_HAPROXY_MQTTS}:${PORT_HAPROXY_MQTTS}
-#      - 25565:25565
-#    links:
-#      - grafana
-#    cap_add:
-#      - NET_ADMIN
-#    volumes:
-#      # Data persistency
-#      # sudo mkdir -p ${INSTALL_DIRECTORY}/data/config
-#      # sudo mkdir -p ${INSTALL_DIRECTORY}/data/letsencrypt
-#      # sudo mkdir -p ${INSTALL_DIRECTORY}/data/certs
-#      - ${INSTALL_DIRECTORY}/haproxy/config:/config
-#      - ${INSTALL_DIRECTORY}/haproxy/data:/etc/letsencrypt
-#      - ${INSTALL_DIRECTORY}/haproxy/certs:/usr/local/etc/haproxy/certs.d
+networks:
+  app-net:
+    driver: overlay
+  backend-network:
+    external: true
