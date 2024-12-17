@@ -29,6 +29,8 @@ services:
     links:
       - influxdb
       - mosquitto
+    ports:
+      - 1880:1880
     env_file:
       - '${INSTALL_DIRECTORY}/nodered/data/env.nodered'
     volumes:
@@ -42,31 +44,34 @@ services:
       - '${INSTALL_DIRECTORY}/grafana/config/env.grafana'
     links:
       - influxdb
+    ports:
+      - 3000:3000
     volumes:
       # Data persistency
       # sudo mkdir -p ${INSTALL_DIRECTORY}/docker/grafana/data; chown 472:472 ${INSTALL_DIRECTORY}/docker/grafana/data
       - ${INSTALL_DIRECTORY}/grafana/data:/var/lib/grafana
 
-  haproxy-certbot:
-    image: bisand/haproxy-certbot
-    container_name: haproxy-certbot
-    restart: always
-    env_file:
-      - '${INSTALL_DIRECTORY}/haproxy/config/env.haproxy'
-    ports:
-      - ${PORT_HAPROXY_HTTP}:${PORT_HAPROXY_HTTP}
-      - ${PORT_HAPROXY_HTTPS}:${PORT_HAPROXY_HTTPS}
-      - ${PORT_HAPROXY_MQTT}:${PORT_HAPROXY_MQTT}
-      - ${PORT_HAPROXY_MQTTS}:${PORT_HAPROXY_MQTTS}
-    links:
-      - grafana
-    cap_add:
-      - NET_ADMIN
-    volumes:
-      # Data persistency
-      # sudo mkdir -p ${INSTALL_DIRECTORY}/data/config
-      # sudo mkdir -p ${INSTALL_DIRECTORY}/data/letsencrypt
-      # sudo mkdir -p ${INSTALL_DIRECTORY}/data/certs
-      - ${INSTALL_DIRECTORY}/haproxy/config:/config
-      - ${INSTALL_DIRECTORY}/haproxy/data:/etc/letsencrypt
-      - ${INSTALL_DIRECTORY}/haproxy/certs:/usr/local/etc/haproxy/certs.d
+#  haproxy-certbot:
+#    image: bisand/haproxy-certbot
+#    container_name: haproxy-certbot
+#    restart: always
+#    env_file:
+#      - '${INSTALL_DIRECTORY}/haproxy/config/env.haproxy'
+#    ports:
+#      - ${PORT_HAPROXY_HTTP}:80
+#      - ${PORT_HAPROXY_HTTPS}:443
+#      - ${PORT_HAPROXY_MQTT}:${PORT_HAPROXY_MQTT}
+#      - ${PORT_HAPROXY_MQTTS}:${PORT_HAPROXY_MQTTS}
+#      - 25565:25565
+#    links:
+#      - grafana
+#    cap_add:
+#      - NET_ADMIN
+#    volumes:
+#      # Data persistency
+#      # sudo mkdir -p ${INSTALL_DIRECTORY}/data/config
+#      # sudo mkdir -p ${INSTALL_DIRECTORY}/data/letsencrypt
+#      # sudo mkdir -p ${INSTALL_DIRECTORY}/data/certs
+#      - ${INSTALL_DIRECTORY}/haproxy/config:/config
+#      - ${INSTALL_DIRECTORY}/haproxy/data:/etc/letsencrypt
+#      - ${INSTALL_DIRECTORY}/haproxy/certs:/usr/local/etc/haproxy/certs.d
