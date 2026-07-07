@@ -90,16 +90,16 @@ services:
         limits:
           # Cap the persistent Chromium; if it ever balloons past this it gets
           # OOM-killed and the on-failure policy restarts it clean.
-          memory: 1G
+          memory: 512M
     environment:
       ENABLE_METRICS: 'false'
       # Must match GF_RENDERING_RENDERER_TOKEN on the grafana service.
       AUTH_TOKEN: 'render-tok-3Fq9Lm2Zx7Pv1Ns'
-      # Keep the browser warm between renders (new incognito context per render
-      # instead of a cold Chromium launch) — cuts render time roughly in half.
-      RENDERING_MODE: clustered
-      RENDERING_CLUSTERING_MODE: context
-      RENDERING_CLUSTERING_MAX_CONCURRENCY: '2'
+      # Reuse one persistent browser: pages share the asset cache, so the Grafana
+      # JS bundle isn't re-fetched/re-parsed on every render (the main cost of the
+      # ~7s renders). If Chromium ever leaks past the 1G limit above it is
+      # OOM-killed and the on-failure restart policy brings it back clean.
+      RENDERING_MODE: reusable
     networks:
       - app-net
       - backend-network
@@ -134,7 +134,7 @@ services:
 # and the service updated on the next deploy). Old configs can be pruned later.
 configs:
   kiosk_index:
-    name: kiosk_index_2e9ae919
+    name: kiosk_index_a0aeace8
     file: ./kiosk/index.html
   kiosk_manifest:
     name: kiosk_manifest_5cc1ecd1

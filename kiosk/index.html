@@ -17,14 +17,12 @@
     /* Center the dashboard strip vertically; letterbox bars share the page background. */
     body { display: flex; align-items: center; justify-content: center; }
     /* Layout viewport is 1300px wide (small axis text), toolbar hidden at the
-       source. Content band spans y=6..772 (766px). The band is stretched to
-       fill the full 4:3 screen (75vw tall): width scales to 100vw, height is
-       scaled by 75/ (766/1300*100) ~ 1.27x vertically. Slightly non-uniform on
-       purpose -- fills the screen completely with the smaller text.
-         image display height = 900/766 * 75vw = 88.12vw
-         top crop            = 6/766 * 75vw   = 0.59vw  */
-    #wrap { width: 100vw; height: 75vw; overflow: hidden; }
-    #dash { width: 100vw; height: 88.12vw; margin-top: -0.59vw; display: block; }
+       source; content band spans y=6..772. Aspect ratio is preserved: the image
+       scales uniformly to the screen width and is centered vertically -- the
+       remaining space becomes slim dark bars that match the background.
+         band height = (772-6)/1300 = 58.92vw, top crop = 6/1300 = 0.46vw */
+    #wrap { width: 100vw; height: 58.92vw; overflow: hidden; }
+    #dash { width: 100vw; margin-top: -0.46vw; display: block; }
     #msg  { position: fixed; top: 2px; right: 4px; color: #444;
             font: 11px -apple-system, Helvetica, Arial, sans-serif; }
   </style>
@@ -35,11 +33,11 @@
 
   <script>
     // Server-rendered dashboard PNG. No Grafana JS runs here, so old Safari is fine.
-    // 1300-wide layout for small axis text, scale=2 for crispness; the CSS above
-    // stretches the band to fill the whole screen (non-uniform, intentional).
-    // Text-size dial: raise width for smaller text / more vertical stretch,
-    // lower it for the opposite. Then re-measure the band (top/bottom y in the
-    // layout), update the #wrap/#dash numbers and bump the kiosk_index hash.
+    // 1300-wide layout for small axis text, scale=2 for crispness, aspect ratio
+    // always preserved (uniform scaling, dark letterbox bars).
+    // Text-size dial: lower width = bigger text and more fill, higher = smaller.
+    // Then re-measure the band, update the #wrap/#dash numbers above and bump
+    // the kiosk_index config hash in docker-compose.yml.
     var BASE = 'https://grafana.bogenhuset.no/render/d/UN3ppwrik/bogenhuset-weather'
              + '?orgId=1&kiosk&_dash.hideTimePicker=true&theme=dark&tz=Europe/Oslo&width=1300&height=900&scale=2';
     var REFRESH_MS = 10000; // start a fresh render every 10s
