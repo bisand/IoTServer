@@ -16,13 +16,14 @@
     html, body { margin: 0; padding: 0; height: 100%; background: #111217; overflow: hidden; }
     /* Center the dashboard strip vertically; letterbox bars share the page background. */
     body { display: flex; align-items: center; justify-content: center; }
-    /* Render is 1300px wide with the toolbar hidden at the source
-       (_dash.hideTimePicker). With the h9 graph rows the content spans
-       y=6..932; only the bottom watermark strip is cropped:
-         height = (932-6)/1300 = 71.2vw, top crop = 6/1300 = 0.46vw.
-       On a 4:3 screen (75vw tall) that fills ~95% of the height. */
-    #wrap { width: 100vw; height: 71.2vw; overflow: hidden; }
-    #dash { width: 100vw; margin-top: -0.46vw; display: block; }
+    /* Layout viewport is 1024px wide (toolbar hidden at the source), where the
+       content band spans y=8..772 -> 1024:764 = 1.34, matching the iPad's 4:3
+       screen to within 0.5%. Rendered with scale=2 the PNG is 2048px wide --
+       the iPad's native panel resolution -- so it displays pixel-perfect.
+       All crop math uses the 1024 layout coordinates:
+         height = (772-8)/1024 = 74.6vw, top crop = 8/1024 = 0.78vw. */
+    #wrap { width: 100vw; height: 74.6vw; overflow: hidden; }
+    #dash { width: 100vw; margin-top: -0.78vw; display: block; }
     #msg  { position: fixed; top: 2px; right: 4px; color: #444;
             font: 11px -apple-system, Helvetica, Arial, sans-serif; }
   </style>
@@ -33,13 +34,12 @@
 
   <script>
     // Server-rendered dashboard PNG. No Grafana JS runs here, so old Safari is fine.
-    // Rendered at 1300px — the sweet spot between 1000 (text too big) and 1800 (band
-    // too short): ~78% screen fill on a 4:3 iPad with comfortably small text. The page
-    // scales the image to the screen width and centers it (dark letterbox bars).
-    // To adjust: change the width here, then update #wrap height / margin-top above
-    // (crop points scale as 62/W and 824/W) and bump the kiosk_index config hash.
+    // 1024-wide layout whose content band matches the iPad's 4:3 screen, rendered
+    // at scale=2 for a native-resolution (2048px) crisp image that fills the screen.
+    // To adjust: change width here, re-measure the band, update #wrap height /
+    // margin-top above and bump the kiosk_index config hash in docker-compose.yml.
     var BASE = 'https://grafana.bogenhuset.no/render/d/UN3ppwrik/bogenhuset-weather'
-             + '?orgId=1&kiosk&_dash.hideTimePicker=true&theme=dark&tz=Europe/Oslo&width=1300&height=1000';
+             + '?orgId=1&kiosk&_dash.hideTimePicker=true&theme=dark&tz=Europe/Oslo&width=1024&height=860&scale=2';
     var REFRESH_MS = 10000; // start a fresh render every 10s
 
     var img = document.getElementById('dash');
