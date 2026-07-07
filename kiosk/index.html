@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <title>Bogenhuset - Weather</title>
+  <style>
+    html, body { margin: 0; padding: 0; height: 100%; background: #111217; }
+    body { display: flex; align-items: flex-start; justify-content: center; }
+    #dash { width: 100%; height: auto; display: block; }
+    #msg { color: #888; font-family: -apple-system, Helvetica, Arial, sans-serif;
+           position: fixed; top: 8px; left: 8px; font-size: 12px; }
+  </style>
+</head>
+<body>
+  <img id="dash" alt="Loading dashboard…">
+  <div id="msg">Loading…</div>
+
+  <script>
+    // Server-rendered dashboard PNG. No Grafana JS runs here, so old Safari is fine.
+    // Tune width/height to taste; increase height if the bottom panels get clipped.
+    var BASE = 'https://grafana.bogenhuset.no/render/d/UN3ppwrik/bogenhuset-weather'
+             + '?orgId=1&kiosk&theme=dark&tz=Europe/Oslo&width=1400&height=1900';
+    var REFRESH_MS = 60000; // re-render every 60s
+
+    var img = document.getElementById('dash');
+    var msg = document.getElementById('msg');
+
+    function reload() {
+      msg.textContent = 'Refreshing…';
+      // cache-bust so Safari always fetches a fresh render
+      img.src = BASE + '&t=' + new Date().getTime();
+    }
+    img.onload = function () { msg.textContent = ''; };
+    img.onerror = function () { msg.textContent = 'Render failed — retrying…'; };
+
+    reload();
+    setInterval(reload, REFRESH_MS);
+  </script>
+</body>
+</html>

@@ -61,6 +61,10 @@ services:
       # Revert InfluxQL query handling to the frontend path; the backend migration path
       # returns HTTP 400 on the legacy queries carried over from Grafana 7.
       GF_FEATURE_TOGGLES_INFLUXDBBACKENDMIGRATION: 'false'
+      # Server-side PNG rendering for the legacy-iPad kiosk (Safari 15 can't run the GF13 frontend).
+      GF_RENDERING_SERVER_URL: http://renderer:8081/render
+      GF_RENDERING_CALLBACK_URL: http://grafana:3000/
+      GF_LOG_FILTERS: rendering:info
     links:
       - influxdb
     ports:
@@ -68,6 +72,35 @@ services:
     volumes:
       # Data persistency
       - /mnt/docker/iotserver/grafana/data:/var/lib/grafana
+    networks:
+      - app-net
+      - backend-network
+
+  # Headless Chromium that renders Grafana dashboards/panels to PNG for the kiosk.
+  renderer:
+    image: grafana/grafana-image-renderer:latest
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+    environment:
+      ENABLE_METRICS: 'false'
+    networks:
+      - app-net
+      - backend-network
+
+  # Tiny static server that shows the rendered dashboard image and auto-refreshes.
+  # The legacy iPad points its browser here; no Grafana JS runs on the iPad.
+  kiosk:
+    image: nginx:alpine
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+    ports:
+      - 8088:80
+    volumes:
+      - /mnt/docker/iotserver/kiosk:/usr/share/nginx/html:ro
     networks:
       - app-net
       - backend-network
