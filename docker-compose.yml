@@ -48,7 +48,7 @@ services:
   grafana:
     image: grafana/grafana:latest # grafana/grafana:7.0.6 # Newer versions tend to not work on legacy IOS devices.
     deploy:
-      replicas: 2
+      replicas: 1
       restart_policy:
         condition: on-failure
     environment:
