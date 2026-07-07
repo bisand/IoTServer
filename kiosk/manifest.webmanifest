@@ -1,0 +1,13 @@
+{
+  "name": "Bogenhuset - Weather",
+  "short_name": "Bogenhuset",
+  "display": "fullscreen",
+  "orientation": "landscape",
+  "background_color": "#111217",
+  "theme_color": "#111217",
+  "start_url": "./",
+  "icons": [
+    { "src": "apple-touch-icon.png", "sizes": "180x180", "type": "image/png" },
+    { "src": "fav32.png", "sizes": "32x32", "type": "image/png" }
+  ]
+}
