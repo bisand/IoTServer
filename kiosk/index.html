@@ -17,10 +17,11 @@
     /* Center the dashboard strip vertically; letterbox bars share the page background. */
     body { display: flex; align-items: center; justify-content: center; }
     /* Render is 1300px wide with the toolbar hidden at the source
-       (_dash.hideTimePicker), so content spans y=6..772; only the bottom
-       watermark strip is cropped:
-         height = (772-6)/1300 = 58.9vw, top crop = 6/1300 = 0.46vw. */
-    #wrap { width: 100vw; height: 58.9vw; overflow: hidden; }
+       (_dash.hideTimePicker). With the h9 graph rows the content spans
+       y=6..932; only the bottom watermark strip is cropped:
+         height = (932-6)/1300 = 71.2vw, top crop = 6/1300 = 0.46vw.
+       On a 4:3 screen (75vw tall) that fills ~95% of the height. */
+    #wrap { width: 100vw; height: 71.2vw; overflow: hidden; }
     #dash { width: 100vw; margin-top: -0.46vw; display: block; }
     #msg  { position: fixed; top: 2px; right: 4px; color: #444;
             font: 11px -apple-system, Helvetica, Arial, sans-serif; }
@@ -38,7 +39,7 @@
     // To adjust: change the width here, then update #wrap height / margin-top above
     // (crop points scale as 62/W and 824/W) and bump the kiosk_index config hash.
     var BASE = 'https://grafana.bogenhuset.no/render/d/UN3ppwrik/bogenhuset-weather'
-             + '?orgId=1&kiosk&_dash.hideTimePicker=true&theme=dark&tz=Europe/Oslo&width=1300&height=900';
+             + '?orgId=1&kiosk&_dash.hideTimePicker=true&theme=dark&tz=Europe/Oslo&width=1300&height=1000';
     var REFRESH_MS = 10000; // start a fresh render every 10s
 
     var img = document.getElementById('dash');
