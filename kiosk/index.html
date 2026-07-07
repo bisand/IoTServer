@@ -14,25 +14,27 @@
   <meta name="theme-color" content="#111217">
   <style>
     html, body { margin: 0; padding: 0; height: 100%; background: #111217; overflow: hidden; }
-    /* Fill the width; the negative top margin crops Grafana's time-picker header.
-       Content aspect (~4:3) fills a landscape iPad top-to-bottom; the "Powered by
-       Grafana" watermark sits just below the bottom edge and is clipped by overflow. */
-    #dash { position: absolute; top: 0; left: 0; width: 100vw; margin-top: -5.5vw; display: block; }
+    /* Center the dashboard strip vertically; letterbox bars share the page background. */
+    body { display: flex; align-items: center; justify-content: center; }
+    /* Render is 1800px wide; content (minus toolbar/watermark) spans y=64..825.
+       The wrapper shows that band scaled to the screen width:
+         height = (825-64)/1800 = 42.28vw, top crop = 64/1800 = 3.56vw. */
+    #wrap { width: 100vw; height: 42.28vw; overflow: hidden; }
+    #dash { width: 100vw; margin-top: -3.56vw; display: block; }
     #msg  { position: fixed; top: 2px; right: 4px; color: #444;
             font: 11px -apple-system, Helvetica, Arial, sans-serif; }
   </style>
 </head>
 <body>
-  <img id="dash" alt="">
+  <div id="wrap"><img id="dash" alt=""></div>
   <div id="msg">…</div>
 
   <script>
     // Server-rendered dashboard PNG. No Grafana JS runs here, so old Safari is fine.
-    // Rendered at 1320px wide: tall-graph layout makes content ~4:3 so it fills a
-    // landscape iPad, and the wider render shrinks the fixed-size axis text. Header
-    // cropped in CSS above; the bottom black strip + watermark fall below the fold.
+    // Rendered wide (1800px) so axis/legend text comes out small and crisp; the page
+    // scales the image to the screen width and centers it (dark letterbox bars).
     var BASE = 'https://grafana.bogenhuset.no/render/d/UN3ppwrik/bogenhuset-weather'
-             + '?orgId=1&kiosk&theme=dark&tz=Europe/Oslo&width=1320&height=1160';
+             + '?orgId=1&kiosk&theme=dark&tz=Europe/Oslo&width=1800&height=900';
     var REFRESH_MS = 10000; // start a fresh render every 10s
 
     var img = document.getElementById('dash');
