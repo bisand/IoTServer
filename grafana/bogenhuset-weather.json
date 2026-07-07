@@ -134,8 +134,8 @@
                 },
                 "textMode": "value_and_name",
                 "text": {
-                  "titleSize": 10,
-                  "valueSize": 14
+                  "titleSize": 12,
+                  "valueSize": 24
                 },
                 "wideLayout": false
               },
@@ -733,8 +733,8 @@
                 },
                 "textMode": "value_and_name",
                 "text": {
-                  "titleSize": 10,
-                  "valueSize": 18
+                  "titleSize": 12,
+                  "valueSize": 24
                 },
                 "wideLayout": false
               },
@@ -869,8 +869,8 @@
                 },
                 "textMode": "value_and_name",
                 "text": {
-                  "titleSize": 10,
-                  "valueSize": 18
+                  "titleSize": 12,
+                  "valueSize": 24
                 },
                 "wideLayout": false
               },
@@ -1006,8 +1006,8 @@
                 },
                 "textMode": "value_and_name",
                 "text": {
-                  "titleSize": 10,
-                  "valueSize": 18
+                  "titleSize": 12,
+                  "valueSize": 24
                 },
                 "wideLayout": false
               },
@@ -1309,8 +1309,8 @@
                 },
                 "textMode": "value_and_name",
                 "text": {
-                  "titleSize": 10,
-                  "valueSize": 18
+                  "titleSize": 12,
+                  "valueSize": 24
                 },
                 "wideLayout": false
               },
@@ -2260,8 +2260,8 @@
                 },
                 "textMode": "value_and_name",
                 "text": {
-                  "titleSize": 10,
-                  "valueSize": 18
+                  "titleSize": 12,
+                  "valueSize": 24
                 },
                 "wideLayout": false
               },
@@ -2393,8 +2393,8 @@
                 },
                 "textMode": "value_and_name",
                 "text": {
-                  "titleSize": 10,
-                  "valueSize": 18
+                  "titleSize": 12,
+                  "valueSize": 24
                 },
                 "wideLayout": false
               },
@@ -2518,8 +2518,8 @@
                 },
                 "textMode": "value_and_name",
                 "text": {
-                  "titleSize": 10,
-                  "valueSize": 18
+                  "titleSize": 12,
+                  "valueSize": 24
                 },
                 "wideLayout": false
               },
@@ -2653,8 +2653,8 @@
                 },
                 "textMode": "value_and_name",
                 "text": {
-                  "titleSize": 10,
-                  "valueSize": 18
+                  "titleSize": 12,
+                  "valueSize": 24
                 },
                 "wideLayout": false
               },
@@ -2921,8 +2921,8 @@
                 },
                 "textMode": "value_and_name",
                 "text": {
-                  "titleSize": 10,
-                  "valueSize": 18
+                  "titleSize": 12,
+                  "valueSize": 24
                 },
                 "wideLayout": false
               },
@@ -3058,8 +3058,8 @@
                 },
                 "textMode": "value_and_name",
                 "text": {
-                  "titleSize": 10,
-                  "valueSize": 14
+                  "titleSize": 12,
+                  "valueSize": 24
                 },
                 "wideLayout": false
               },
@@ -3194,8 +3194,8 @@
                 },
                 "textMode": "value_and_name",
                 "text": {
-                  "titleSize": 10,
-                  "valueSize": 18
+                  "titleSize": 12,
+                  "valueSize": 24
                 },
                 "wideLayout": false
               },
@@ -3330,8 +3330,8 @@
                 },
                 "textMode": "value_and_name",
                 "text": {
-                  "titleSize": 10,
-                  "valueSize": 18
+                  "titleSize": 12,
+                  "valueSize": 24
                 },
                 "wideLayout": false
               },
