@@ -124,7 +124,7 @@ services:
 # and the service updated on the next deploy). Old configs can be pruned later.
 configs:
   kiosk_index:
-    name: kiosk_index_01002608
+    name: kiosk_index_1e85f4b3
     file: ./kiosk/index.html
   kiosk_manifest:
     name: kiosk_manifest_5cc1ecd1
