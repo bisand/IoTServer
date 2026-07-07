@@ -3726,7 +3726,7 @@
               "x": 0,
               "y": 9,
               "width": 8,
-              "height": 10,
+              "height": 8,
               "element": {
                 "kind": "ElementReference",
                 "name": "panel-2"
@@ -3739,7 +3739,7 @@
               "x": 8,
               "y": 9,
               "width": 8,
-              "height": 10,
+              "height": 8,
               "element": {
                 "kind": "ElementReference",
                 "name": "panel-12"
@@ -3752,7 +3752,7 @@
               "x": 16,
               "y": 9,
               "width": 8,
-              "height": 10,
+              "height": 8,
               "element": {
                 "kind": "ElementReference",
                 "name": "panel-11"
@@ -3763,9 +3763,9 @@
             "kind": "GridLayoutItem",
             "spec": {
               "x": 0,
-              "y": 19,
+              "y": 17,
               "width": 8,
-              "height": 10,
+              "height": 8,
               "element": {
                 "kind": "ElementReference",
                 "name": "panel-31"
@@ -3776,9 +3776,9 @@
             "kind": "GridLayoutItem",
             "spec": {
               "x": 8,
-              "y": 19,
+              "y": 17,
               "width": 8,
-              "height": 10,
+              "height": 8,
               "element": {
                 "kind": "ElementReference",
                 "name": "panel-28"
@@ -3789,9 +3789,9 @@
             "kind": "GridLayoutItem",
             "spec": {
               "x": 16,
-              "y": 19,
+              "y": 17,
               "width": 8,
-              "height": 10,
+              "height": 8,
               "element": {
                 "kind": "ElementReference",
                 "name": "panel-26"
