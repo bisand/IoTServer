@@ -29,11 +29,13 @@
   <script>
     // Server-rendered dashboard PNG. No Grafana JS runs here, so old Safari is fine.
     // Render size is computed from this device's screen so the image always has
-    // the screen's exact aspect ratio; autofitpanels makes the grid fill it.
+    // the screen's exact aspect ratio. The dashboard grid itself is sized to be
+    // ~4:3 (h12 graph rows), so the content fills the frame natively -- no
+    // autofitpanels (it applies too late in the renderer and is unreliable).
     // TEXT_FACTOR is the one dial: 1.0 renders at the screen's CSS resolution
     // (biggest text), higher renders a larger layout => smaller text.
     // (Grafana has no dynamic font sizing, so this factor IS the font control.)
-    var TEXT_FACTOR = 1.27; // 1024 * 1.27 = 1300 on the iPad, the approved look
+    var TEXT_FACTOR = 1.53; // 1024 * 1.53 = 1567 on the iPad ~ the approved look
     // Orientation guard: older iPadOS Safari can report screen.width/height in
     // portrait regardless of how the device is held. The kiosk is landscape, so
     // always treat the longer side as the width.
@@ -42,7 +44,7 @@
     var w = Math.round(sw * TEXT_FACTOR);
     var h = Math.round(w * sh / sw);
     var BASE = 'https://grafana.bogenhuset.no/render/d/UN3ppwrik/bogenhuset-weather'
-             + '?orgId=1&kiosk&_dash.hideTimePicker=true&autofitpanels&theme=dark&tz=Europe/Oslo'
+             + '?orgId=1&kiosk&_dash.hideTimePicker=true&theme=dark&tz=Europe/Oslo'
              + '&width=' + w + '&height=' + h;
     var REFRESH_MS = 10000; // start a fresh render every 10s
 
