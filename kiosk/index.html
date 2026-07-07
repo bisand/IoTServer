@@ -14,32 +14,36 @@
   <meta name="theme-color" content="#111217">
   <style>
     html, body { margin: 0; padding: 0; height: 100%; background: #111217; overflow: hidden; }
-    /* Center the dashboard strip vertically; letterbox bars share the page background. */
-    body { display: flex; align-items: center; justify-content: center; }
-    /* Layout viewport is 1300px wide (small axis text), toolbar hidden at the
-       source; content band spans y=6..772. Aspect ratio is preserved: the image
-       scales uniformly to the screen width and is centered vertically -- the
-       remaining space becomes slim dark bars that match the background.
-         band height = (772-6)/1300 = 58.92vw, top crop = 6/1300 = 0.46vw */
-    #wrap { width: 100vw; height: 58.92vw; overflow: hidden; }
-    #dash { width: 100vw; margin-top: -0.46vw; display: block; }
+    /* The render is requested at 1300x975 = 4:3, same aspect as the iPad screen,
+       with &autofitpanels making the panel grid fill the frame. So the page is
+       just a normal image scaled uniformly to the viewport - nothing else. */
+    #dash { width: 100vw; height: 100vh; object-fit: contain; display: block; }
     #msg  { position: fixed; top: 2px; right: 4px; color: #444;
             font: 11px -apple-system, Helvetica, Arial, sans-serif; }
   </style>
 </head>
 <body>
-  <div id="wrap"><img id="dash" alt=""></div>
+  <img id="dash" alt="">
   <div id="msg">…</div>
 
   <script>
     // Server-rendered dashboard PNG. No Grafana JS runs here, so old Safari is fine.
-    // 1300-wide layout for small axis text, scale=2 for crispness, aspect ratio
-    // always preserved (uniform scaling, dark letterbox bars).
-    // Text-size dial: lower width = bigger text and more fill, higher = smaller.
-    // Then re-measure the band, update the #wrap/#dash numbers above and bump
-    // the kiosk_index config hash in docker-compose.yml.
+    // Render size is computed from this device's screen so the image always has
+    // the screen's exact aspect ratio; autofitpanels makes the grid fill it.
+    // TEXT_FACTOR is the one dial: 1.0 renders at the screen's CSS resolution
+    // (biggest text), higher renders a larger layout => smaller text.
+    // (Grafana has no dynamic font sizing, so this factor IS the font control.)
+    var TEXT_FACTOR = 1.27; // 1024 * 1.27 = 1300 on the iPad, the approved look
+    // Orientation guard: older iPadOS Safari can report screen.width/height in
+    // portrait regardless of how the device is held. The kiosk is landscape, so
+    // always treat the longer side as the width.
+    var sw = Math.max(screen.width, screen.height);
+    var sh = Math.min(screen.width, screen.height);
+    var w = Math.round(sw * TEXT_FACTOR);
+    var h = Math.round(w * sh / sw);
     var BASE = 'https://grafana.bogenhuset.no/render/d/UN3ppwrik/bogenhuset-weather'
-             + '?orgId=1&kiosk&_dash.hideTimePicker=true&theme=dark&tz=Europe/Oslo&width=1300&height=900&scale=2';
+             + '?orgId=1&kiosk&_dash.hideTimePicker=true&autofitpanels&theme=dark&tz=Europe/Oslo'
+             + '&width=' + w + '&height=' + h;
     var REFRESH_MS = 10000; // start a fresh render every 10s
 
     var img = document.getElementById('dash');
