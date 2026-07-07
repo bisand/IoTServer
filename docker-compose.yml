@@ -49,7 +49,7 @@ services:
   grafana:
     # Stepwise upgrade from 7.0.6 (legacy iOS no longer supported). Bump one hop at a time, wait for a
     # clean start, verify the UI, then move to the next: 7.5.17 -> 8.5.27 -> 9.5.21 -> 10.4.19 -> 11.6.16 -> 12.4.5 -> 13.1.0
-    image: grafana/grafana:12.4.5
+    image: grafana/grafana:latest
     deploy:
       replicas: 1
       restart_policy:
