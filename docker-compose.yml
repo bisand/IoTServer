@@ -1,4 +1,4 @@
-version: '3.4'
+version: '3.8'
 
 services:
   mosquitto:
@@ -96,6 +96,8 @@ services:
 
   # Tiny static server that shows the rendered dashboard image and auto-refreshes.
   # The legacy iPad points its browser here; no Grafana JS runs on the iPad.
+  # Files are delivered as swarm configs from ./kiosk in this repo, so a git push
+  # (Portainer redeploy) updates the kiosk page — no host access / scp needed.
   kiosk:
     image: nginx:alpine
     deploy:
@@ -104,11 +106,35 @@ services:
         condition: on-failure
     ports:
       - 8088:80
-    volumes:
-      - /mnt/docker/iotserver/kiosk:/usr/share/nginx/html:ro
+    configs:
+      - source: kiosk_index
+        target: /usr/share/nginx/html/index.html
+      - source: kiosk_manifest
+        target: /usr/share/nginx/html/manifest.webmanifest
+      - source: kiosk_appicon
+        target: /usr/share/nginx/html/apple-touch-icon.png
+      - source: kiosk_favicon
+        target: /usr/share/nginx/html/fav32.png
     networks:
       - app-net
       - backend-network
+
+# Swarm configs are immutable, so each name carries the file's content hash.
+# When a kiosk file changes, bump the hash in its name (a new config is created
+# and the service updated on the next deploy). Old configs can be pruned later.
+configs:
+  kiosk_index:
+    name: kiosk_index_23e0f330
+    file: ./kiosk/index.html
+  kiosk_manifest:
+    name: kiosk_manifest_5cc1ecd1
+    file: ./kiosk/manifest.webmanifest
+  kiosk_appicon:
+    name: kiosk_appicon_36b514c0
+    file: ./kiosk/apple-touch-icon.png
+  kiosk_favicon:
+    name: kiosk_favicon_ae30d113
+    file: ./kiosk/fav32.png
 
 networks:
   app-net:
