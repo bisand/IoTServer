@@ -16,7 +16,7 @@ services:
       - backend-network
 
   influxdb:
-    image: influxdb:1.8-alpine
+    image: influxdb:1.11-alpine
     deploy:
       replicas: 1
       restart_policy:
@@ -46,7 +46,7 @@ services:
       - backend-network
 
   grafana:
-    image: grafana/grafana:7.0.6 # Newer versions tend to not work on legacy IOS devices.
+    image: grafana/grafana:latest # grafana/grafana:7.0.6 # Newer versions tend to not work on legacy IOS devices.
     deploy:
       replicas: 2
       restart_policy:
