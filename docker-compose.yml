@@ -65,6 +65,9 @@ services:
       GF_RENDERING_SERVER_URL: http://renderer:8081/render
       GF_RENDERING_CALLBACK_URL: http://grafana:3000/
       GF_LOG_FILTERS: rendering:info
+      # Shared secret between Grafana and the renderer; GF13 blocks the default token in prod.
+      # Must equal the renderer's AUTH_TOKEN below. Rotate this / move to a Portainer secret if you like.
+      GF_RENDERING_RENDERER_TOKEN: 'render-tok-3Fq9Lm2Zx7Pv1Ns'
     links:
       - influxdb
     ports:
@@ -85,6 +88,8 @@ services:
         condition: on-failure
     environment:
       ENABLE_METRICS: 'false'
+      # Must match GF_RENDERING_RENDERER_TOKEN on the grafana service.
+      AUTH_TOKEN: 'render-tok-3Fq9Lm2Zx7Pv1Ns'
     networks:
       - app-net
       - backend-network
