@@ -17,6 +17,7 @@ services:
 
   influxdb:
     image: influxdb:1.11-alpine
+    user: '0' # 1.8 wrote data as root; 1.11 runs as UID 1500 and can't write the root-owned volume
     deploy:
       replicas: 1
       restart_policy:
@@ -46,7 +47,9 @@ services:
       - backend-network
 
   grafana:
-    image: grafana/grafana:latest # grafana/grafana:7.0.6 # Newer versions tend to not work on legacy IOS devices.
+    # Stepwise upgrade from 7.0.6 (legacy iOS no longer supported). Bump one hop at a time, wait for a
+    # clean start, verify the UI, then move to the next: 7.5.17 -> 8.5.27 -> 9.5.21 -> 10.4.19 -> 11.6.16 -> 12.4.5 -> 13.1.0
+    image: grafana/grafana:7.5.17
     deploy:
       replicas: 1
       restart_policy:
