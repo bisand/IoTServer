@@ -34,7 +34,9 @@ services:
       replicas: 1
       restart_policy:
         condition: on-failure
-    user: '0'
+    # Run as the image's built-in non-root node-red user (uid/gid 1000) instead of root,
+    # so a future breakout inside the container isn't root. /data is chowned to 1000:1000 to match.
+    user: '1000:1000'
     links:
       - influxdb
       - mosquitto
